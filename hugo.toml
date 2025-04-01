@@ -1,4 +1,4 @@
-baseURL = '/'
+baseURL = 'https://docs.hackthechain.xyz'
 languageCode = 'en-us'
 title = 'Hack The Chain Documentation'
 contentDir = 'content'
