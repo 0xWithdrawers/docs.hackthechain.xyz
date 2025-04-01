@@ -1,6 +1,6 @@
 baseURL = '/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'Hack The Chain Documentation'
 contentDir = 'content'
 enableEmoji = true
 enableGitInfo = true
@@ -23,3 +23,33 @@ unsafe = true # https://jdhao.github.io/2019/12/29/hugo_html_not_shown/
 [markup.goldmark.parser]
 [markup.goldmark.parser.attribute]
 block = true
+
+[params]
+
+[params.footer]
+copyright = "© :YEAR: Hack The Chain. Built with [**Lotus Docs**](https://github.com/colinwilson/lotusdocs)"
+version = true
+[params.social]
+github = "0xWithdrawers/docs.hackthechain.xyz"
+
+[params.docs] # Parameters for the /docs 'template'
+darkMode = true          # enable dark mode option? default false
+prism = true             # enable syntax highlighting via Prism
+prismTheme = "lotusdocs"
+
+# gitinfo
+repoURL = "https://github.com/0xWithdrawers/docs.hackthechain.xyz" # Git repository URL for your site [support for GitHub, GitLab, and BitBucket]
+repoBranch = "main"
+editPage = true                                                    # enable 'Edit this page' feature - default false
+lastMod = true                                                     # enable 'Last modified' date on pages - default false
+lastModRelative = true                                             # format 'Last modified' time as relative - default true
+
+sidebarIcons = true # enable sidebar icons? default false
+titleIcon = true    # enable front matter icon title prefix? default is false
+
+[menu]
+[[menu.primary]]
+name = "Docs"
+url = "/docs/"
+identifier = "docs"
+weight = 10
