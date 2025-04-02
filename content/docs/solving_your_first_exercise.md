@@ -1,7 +1,7 @@
 ---
 weight: 40
 title: "Solving your first exercise"
-description: "..."
+description: "Validate your first exercise without the headache"
 icon: "emoji_objects"
 date: "2025-04-02T08:00:00+02:00"
 lastmod: "2025-04-02T08:00:00+02:00"
