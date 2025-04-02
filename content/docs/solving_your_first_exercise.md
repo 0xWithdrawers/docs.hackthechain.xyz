@@ -119,7 +119,7 @@ contract StorageCaller {
 6. Confirm the transaction in MetaMask
 7. Wait for the transaction to be confirmed
 
-![Remix - Call Set Variable](https://hackthechain.s3.nl-ams.scw.cloud/images/solving_your_first_exercise/remix_call_set_variable.jpg)
+![Remix - Call Set Variable](https://hackthechain.s3.nl-ams.scw.cloud/images/solving_your_first_exercise/remix_set_variable.jpg)
 
 ### Step 5: Verify the Change
 
