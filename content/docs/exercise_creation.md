@@ -101,46 +101,58 @@ contract TokenVault {
 
 ### 3. Creating the Validation Method
 
-The validation method is a JavaScript function that verifies whether the user has successfully exploited the vulnerability. This code runs in the browser using ethers.js to interact with the deployed contract.
+The validation method is a Solidity script that verifies whether the user has successfully exploited the vulnerability. This code runs server-side using Foundry to validate the deployed contract's state after exploitation.
 
-Your validation method should:
-- Connect to the deployed contract
+Your validation script should:
+- Import necessary Foundry scripts (`forge-std/Script.sol`)
+- Create an interface for your vulnerable contract
+- Access the deployed contract address using environment variables
 - Check specific conditions that prove exploitation
-- Return a boolean or an object with a `success` property
+- Use `require` statements to validate success conditions
 
-Example validation method:
+Example validation script:
 
-```javascript
-// The context object provides access to the deployed contract, provider, signer, etc.
-const contractAddress = context.contract;
-const provider = context.provider;
-const userAddress = context.userAddress;
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.13;
 
-// Create a contract instance
-const abi = [
-  "function getBalance() view returns (uint256)",
-  "function balances(address) view returns (uint256)"
-];
-const contract = new context.ethers.Contract(contractAddress, abi, context.signer);
+import "forge-std/Script.sol";
 
-// Check if the exploit was successful
-const contractBalance = await contract.getBalance();
-const userBalanceInContract = await contract.balances(userAddress);
+// Interface for the vulnerable contract
+interface ITokenVault {
+    function balances(address) external view returns (uint256);
+    function getBalance() external view returns (uint256);
+    // Add other necessary functions from your contract
+}
 
-// Success criteria: Contract has less funds than recorded in user's balance
-// (indicating a successful re-entrancy attack)
-if (contractBalance < userBalanceInContract) {
-  return {
-    success: true,
-    message: "Exploit successful! You've exploited the re-entrancy vulnerability."
-  };
-} else {
-  return {
-    success: false,
-    message: "The contract still has enough balance. Try exploiting the re-entrancy vulnerability."
-  };
+contract ValidationScript is Script {
+    function run() external {
+        // Get environment variables
+        address contractAddress = vm.envAddress("CONTRACT_ADDRESS");
+        address userAddress = vm.envAddress("USER_ADDRESS");
+
+        // Connect to the deployed contract
+        ITokenVault vault = ITokenVault(contractAddress);
+
+        // Validation conditions
+        bool fundsDrained = address(contractAddress).balance == 0;
+
+        // Additional checks specific to the vulnerability
+        // For a re-entrancy attack, we might check:
+        bool balancesInconsistent = vault.balances(userAddress) > 0 &&
+                                   address(contractAddress).balance == 0;
+
+        // Require all conditions to be met
+        require(fundsDrained, "Contract funds were not drained");
+        require(balancesInconsistent, "Balance inconsistency not exploited");
+
+        // If we reach here, the exploit was successful
+        console.log("Challenge completed successfully!");
+    }
 }
 ```
+
+Your script should focus on verifying the end-state of the contract after exploitation, rather than the specific method used to exploit it.
 
 ### 4. Writing the Solution
 
@@ -233,17 +245,15 @@ Once your exercise is created:
 5. **Comprehensive Solution**: Explain not just how to exploit, but also how to fix the vulnerability
 6. **Test Thoroughly**: Ensure your validation method correctly identifies both successful and failed attempts
 
-## Available Context in Validation Methods
+## Available Context in Validation Scripts
 
-When writing your validation method, you have access to the following properties in the `context` object:
+When writing your validation script, you have access to the following environment variables and Foundry utilities:
 
-| Property | Description |
+| Variable/Function | Description |
 |----------|-------------|
-| `contract` | The address of the deployed contract |
-| `provider` | An ethers.js provider connected to the blockchain |
-| `signer` | An ethers.js signer for the current user |
-| `userAddress` | The Ethereum address of the current user |
-| `ethers` | The ethers.js library |
+| `vm.envAddress("CONTRACT_ADDRESS")` | The address of the deployed vulnerable contract |
+
+The validation script executes against the actual deployed contract on the testnet.
 
 ## Conclusion
 
