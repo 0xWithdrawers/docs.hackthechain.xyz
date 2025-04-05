@@ -69,7 +69,7 @@ contract StorageCaller {
     address public simpleStorageAddress = 0x93980988c77c1f1c0d86D93a0485c4D7dd26e10D;
 
     function callSetVariable(uint256 newValue) public {
-        // Appel direct avec la signature de la fonction
+        // Direct call with function signature
         (bool success, ) = simpleStorageAddress.call(
             abi.encodeWithSignature("setVariable(uint256)", newValue)
         );
@@ -77,7 +77,7 @@ contract StorageCaller {
     }
 
     function checkStoredValue() public view returns (uint256) {
-        // Appel en lecture seule (staticcall)
+        // Read-only call (staticcall)
         (bool success, bytes memory data) = simpleStorageAddress.staticcall(
             abi.encodeWithSignature("getVariable()")
         );
