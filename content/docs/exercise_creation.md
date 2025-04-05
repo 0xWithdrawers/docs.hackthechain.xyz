@@ -70,33 +70,24 @@ Example:
 pragma solidity ^0.8.0;
 
 /**
- * @title Simple Token Vault
- * @dev A vault that stores tokens with a simple withdrawal mechanism
+ * @title Simple Storage
+ * @dev Simply stores a value
  */
-contract TokenVault {
-    mapping(address => uint256) public balances;
+ contract SimpleStorage {
+     uint256 private storedData;
 
-    // Function to deposit tokens
-    function deposit() public payable {
-        balances[msg.sender] += msg.value;
-    }
+     constructor() {
+         storedData = 0;
+     }
 
-    // Vulnerable withdrawal function
-    function withdraw(uint256 amount) public {
-        require(balances[msg.sender] >= amount, "Insufficient balance");
+     function setVariable(uint256 x) public {
+         storedData = x;
+     }
 
-        // Vulnerability: State update after external call
-        (bool success, ) = msg.sender.call{value: amount}("");
-        require(success, "Transfer failed");
-
-        balances[msg.sender] -= amount;
-    }
-
-    // Get the contract's balance
-    function getBalance() public view returns (uint256) {
-        return address(this).balance;
-    }
-}
+     function getVariable() public view returns (uint256) {
+         return storedData;
+     }
+ }
 ```
 
 ### 3. Creating the Validation Method
@@ -119,34 +110,24 @@ pragma solidity ^0.8.13;
 import "forge-std/Script.sol";
 
 // Interface for the vulnerable contract
-interface ITokenVault {
-    function balances(address) external view returns (uint256);
-    function getBalance() external view returns (uint256);
+interface ISimpleStorage {
+    function getVariable() external view returns (uint256);
     // Add other necessary functions from your contract
 }
 
 contract ValidationScript is Script {
     function run() external {
-        // Get environment variables
         address contractAddress = vm.envAddress("CONTRACT_ADDRESS");
-        address userAddress = vm.envAddress("USER_ADDRESS");
+        console.log("Checking contract at address:", contractAddress);
 
-        // Connect to the deployed contract
-        ITokenVault vault = ITokenVault(contractAddress);
+        ISimpleStorage target = ISimpleStorage(contractAddress);
+        uint256 currentValue = target.getVariable();
+        console.log("Current value in contract:", currentValue);
 
-        // Validation conditions
-        bool fundsDrained = address(contractAddress).balance == 0;
+        bool valueChanged = currentValue != 0;
+        console.log("Is value different from 0?", valueChanged);
 
-        // Additional checks specific to the vulnerability
-        // For a re-entrancy attack, we might check:
-        bool balancesInconsistent = vault.balances(userAddress) > 0 &&
-                                   address(contractAddress).balance == 0;
-
-        // Require all conditions to be met
-        require(fundsDrained, "Contract funds were not drained");
-        require(balancesInconsistent, "Balance inconsistency not exploited");
-
-        // If we reach here, the exploit was successful
+        require(valueChanged, "Value is still 0");
         console.log("Challenge completed successfully!");
     }
 }
