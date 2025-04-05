@@ -13,84 +13,54 @@ This documentation explains how exercise validation works on our Smart Contract 
 
 ## How Exercise Validation Works
 
-When you deploy a contract and click the "Check Exploit" button, our platform executes a validation script to determine if your exploit was successful. This validation happens entirely in your browser through the following process:
+When you deploy a contract and click the "Check Exploit" button, our platform executes a validation script to determine if your exploit was successful. The entire check is performed server-side.
 
-1. The platform retrieves the `validationMethod` associated with the exercise
-2. It creates a context object containing your deployed contract address, wallet information, and `ethers.js` library
-3. It executes the validation code against your deployed contract
-4. Based on the results, it determines if you've successfully solved the exercise
+## Exercise Status Levels
 
-## Security Considerations: Community-Submitted Exercises
+All exercises on the platform have one of three status levels:
 
-### Important Warning: Potential JavaScript Injection Risk
+1. **Private** - Newly created or modified exercises that are only visible to their creator as well as users with the link.
+2. **Verified** - Exercises reviewed and approved by our administration team.
+3. **Public** - Verified exercises that have been made available to all users.
 
-Community-submitted exercises include custom validation code that runs in your browser when you click "Check Exploit." **This validation code is arbitrary JavaScript that executes in your browser context.**
+## Security Considerations
 
-### Risk of Stored XSS
+### Verification Process
 
-The validation method is stored on our server and runs in your browser. For unverified exercises, this presents a **potential Stored XSS (Cross-Site Scripting) risk**, as a malicious exercise creator could include harmful JavaScript code in their validation method.
+Our team employs a rigorous verification process:
 
-### Verification Status
+1. **Submission** - Exercise creators can request verification through the platform
+2. **Review** - Our administrators review both the vulnerable contract and validation code
+3. **Approval/Rejection** - Exercises are either approved (status changed to "verified") or rejected
+4. **Publication** - Verified exercises may be further promoted to "public" status for broader visibility
 
-All exercises on the platform have one of three statuses:
+## Verification Requests
 
-1. **Verified** Exercises reviewed by our team and considered safe
-2. **Pending Verification** Exercises submitted by community members awaiting review
-3. **Unverified** Exercises that have not been submitted for verification
+### For Exercise Creators
+
+When you create or modify an exercise:
+
+1. Your exercise starts with a "private" status
+2. You can request verification by:
+   - Editing your exercise
+   - Going to the "Publication" tab
+   - Checking "Request verification" or "Request publication"
+   - Adding a note for administrators (optional but recommended)
+   - Submitting your changes
 
 ## Warning Banner for Unverified Exercises
 
-When viewing an unverified exercise, you'll see a prominent warning banner with the following information:
+When working with unverified exercises, you'll see a prominent warning banner:
 
 ```
 This exercise has not been verified by the platform administrators.
-
-The "Check Exploit" button runs JavaScript code submitted by the exercise creator that could potentially access your wallet information or perform unwanted actions.
-
-Only run "Check Exploit" if you trust the exercise creator or have reviewed the code.
 ```
-
-## Best Practices for Users
-
-To protect yourself when using the platform:
-
-1. **Prioritize verified exercises** that have been reviewed by our team
-2. For unverified exercises:
-   - Check the creator's reputation and history
-   - Review the validation code before running "Check Exploit" (expanded in Debug Information)
-   - Consider deploying to a separate wallet with minimal funds if unsure
-   - Never interact with suspicious exercises using your main wallet
-3. **Report suspicious exercises** to our team immediately
-
-## Viewing Validation Code
-
-For transparency, all unverified exercises display their validation code in the "View Validation Code" section:
-
-1. Scroll to the bottom of the exercise page
-2. Expand the "View Validation Code" section
-3. Review the JavaScript code that will execute when you click "Check Exploit"
-
-## Verification Process
-
-Our team reviews community-submitted exercises through the following process:
-
-1. **Code Review**: We analyze both the contract code and validation code
-2. **Security Testing**: We test for potential XSS and other security vulnerabilities
-3. **Functionality Testing**: We verify that the exercise works as intended
 
 ## For Exercise Creators
 
-If you're creating exercises for the platform:
+When creating exercises for the platform:
 
 1. Write clear, concise validation code that only performs necessary checks
-2. Avoid accessing sensitive user information beyond what's needed for validation
-3. Submit your exercise for verification to help build trust
+2. Provide detailed explanations in your verification request notes
+3. Be prepared to make adjustments based on administrator feedback
 4. Document your validation approach in the exercise description
-
-## Conclusion
-
-Our platform balances educational value with security. While we implement safeguards and encourage exercise verification, users should remain vigilant when interacting with community-submitted content.
-
-The risk of executing arbitrary JavaScript when validating unverified exercises is an accepted trade-off for the educational benefits of our platform, but one that requires user awareness and caution.
-
-Remember: **Only run "Check Exploit" on unverified exercises if you trust the creator or have reviewed the validation code yourself.**
