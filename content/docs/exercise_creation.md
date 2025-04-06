@@ -115,6 +115,7 @@ interface ISimpleStorage {
     // Add other necessary functions from your contract
 }
 
+// The contract name MUST be ValidationScript
 contract ValidationScript is Script {
     function run() external {
         address contractAddress = vm.envAddress("CONTRACT_ADDRESS");
